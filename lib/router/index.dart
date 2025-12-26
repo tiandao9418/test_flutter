@@ -18,13 +18,17 @@ final GoRouter router = GoRouter(
   },
   // 定义路由列表
   routes: [
+    /// 启动页
     routerStartPage,
+    /// 底部导航
     ShellRoute(
       builder: (context, state, child) {
         return Layout(child: child);
       },
       routes: routerNavPage,
     ),
+    /// 搜索页
+    routerSearchPage,
   ],
   errorBuilder: (context, state) => const Err(),
 );

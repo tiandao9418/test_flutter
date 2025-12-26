@@ -20,10 +20,8 @@ class DioApiList {
   }
 
   // 分类
-  static Future<ModelCategory> apiGetCategory({
-    required Map<String, dynamic> query,
-  }) async {
-    Response response = await DioApi().get(DioApiName.category, query: query);
+  static Future<ModelCategory> apiGetCategory() async {
+    Response response = await DioApi().get(DioApiName.category);
     return ModelCategory.fromJson(response.data);
   }
 }

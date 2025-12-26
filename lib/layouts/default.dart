@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_flutter/model/bottom_tab.dart';
 import 'package:test_flutter/model/leftNav.dart';
+import 'package:test_flutter/router/index.dart';
 import 'package:test_flutter/util/util_theme.dart';
 import 'package:test_flutter/view/video.dart';
 import 'package:test_flutter/view/home/index.dart';
@@ -53,6 +54,7 @@ class _LayoutState extends State<Layout> {
           GestureDetector(
             onTap: () {
               _scaffoldKey.currentState?.openEndDrawer();
+              router.push('/search');
             },
             child: Text(
               "\uf00a",
@@ -68,7 +70,7 @@ class _LayoutState extends State<Layout> {
     );
   }
 
-  /// 头部-侧边栏-左
+  /// 头部-侧边栏
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<LeftNavItem> _nav = [
     LeftNavItem(
@@ -199,7 +201,7 @@ class _LayoutState extends State<Layout> {
     );
   }
 
-  /// 头部-搜索栏
+  /// 头部-搜索
   final List<String> historyList = [
     '流浪地球3',
     '复联5',
@@ -470,7 +472,7 @@ class _LayoutState extends State<Layout> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: _buildLeftNav(),
-      endDrawer: _buildRightSearch(),
+      // endDrawer: _buildRightSearch(),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: SafeArea(bottom: false, child: _buildHeader()),

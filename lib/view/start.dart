@@ -8,10 +8,10 @@ import 'package:test_flutter/component/com_loading.dart';
 import 'package:test_flutter/dio/dio_api_list.dart';
 import 'package:test_flutter/model/ad.dart';
 import 'package:test_flutter/model/start_ad.dart';
+import 'package:test_flutter/router/index.dart';
 import 'package:test_flutter/util/util_hive_cache.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:test_flutter/util/util_log.dart';
 import 'package:test_flutter/util/util_sp.dart';
 import 'package:test_flutter/util/util_theme.dart';
 
@@ -101,6 +101,7 @@ class _StartState extends State<Start> {
     _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (_currentTime <= 0) {
         _clearCountdown();
+        router.go('/home');
         return;
       }
       setState(() {

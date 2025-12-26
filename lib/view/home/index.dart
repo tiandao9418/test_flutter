@@ -25,9 +25,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   /// 初始化
   bool _isLoading = true;
   Future<void> _init() async {
-    final ModelCategory response = await DioApiList.apiGetCategory(
-      query: {'type': 3},
-    );
+    final ModelCategory response = await DioApiList.apiGetCategory();
     if (response.code == 200) {
       if (response.data!.isNotEmpty) {
         setState(() {

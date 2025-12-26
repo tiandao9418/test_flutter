@@ -46,5 +46,5 @@ class UtilTheme {
   static TextStyle text20 = TextStyle(color: dark2, fontSize: 20.r);
   static TextStyle text14Theme = TextStyle(color: theme, fontSize: 14.r);
   // 标题
-  static TextStyle title10 = TextStyle(color: dark2, fontSize: 10.r, fontWeight: FontWeight.w900);
+  static TextStyle title16Weight = TextStyle(color: dark2, fontSize: 16.r, fontWeight: FontWeight.w900);
 }

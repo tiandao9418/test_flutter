@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_flutter/router/router_name.dart';
+import 'package:test_flutter/view/search.dart';
 import 'package:test_flutter/view/video.dart';
 import 'package:test_flutter/view/home/index.dart';
 import 'package:test_flutter/view/mine.dart';
@@ -36,3 +38,27 @@ final List<GoRoute> routerNavPage = [
     builder: (context, GoRouterState state) => const Mine(),
   ),
 ];
+
+/// 搜索页
+final GoRoute routerSearchPage = GoRoute(
+  path: '/search',
+  pageBuilder: (context, state) {
+    return CustomTransitionPage(
+      key: state.pageKey,
+      child: Search(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // 从右侧滑入动画
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.easeInOut;
+        final tween = Tween(begin: begin, end: end)
+            .chain(CurveTween(curve: curve));
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+      transitionDuration: Duration(milliseconds: 300),
+    );
+  },
+);
