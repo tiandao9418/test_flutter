@@ -20,7 +20,7 @@ class _SearchState extends State<Search> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 1), () {
       _init();
     });
   }
@@ -36,40 +36,44 @@ class _SearchState extends State<Search> {
   }
 
   Widget _buildSearch() {
-    return SafeArea(
-      child: ListView.builder(
-        padding: EdgeInsets.zero,
-        itemCount: 3, // 3个块
-        itemBuilder: (context, index) {
-          switch (index) {
-            case 0:
-              return _buildSearchItem(
-                title: '搜索历史',
-                items: historyList,
-                showClear: true,
-              );
-            case 1:
-              return _buildSearchItem(
-                title: '热门搜索',
-                items: hotList,
-                showHotIcon: true,
-              );
-            case 2:
-              return _buildSearchItem(
-                title: '推荐搜索',
-                items: recommendList,
-                isText: true,
-              );
-            default:
-              return const SizedBox();
-          }
-        },
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: ClampingScrollPhysics(),
+      padding: EdgeInsets.zero,
+      itemCount: 3,
+      itemBuilder: (context, index) {
+        switch (index) {
+          case 0:
+            return _buildSearchItem(
+              index: index,
+              title: '搜索历史',
+              items: historyList,
+              showClear: true,
+            );
+          case 1:
+            return _buildSearchItem(
+              index: index,
+              title: '热门搜索',
+              items: hotList,
+              showHotIcon: true,
+            );
+          case 2:
+            return _buildSearchItem(
+              index: index,
+              title: '推荐搜索',
+              items: recommendList,
+              isText: true,
+            );
+          default:
+            return const SizedBox();
+        }
+      },
     );
   }
 
   /// 列表项
   Widget _buildSearchItem({
+    required int index,
     required String title,
     required List<String> items,
     bool showClear = false,
@@ -87,7 +91,12 @@ class _SearchState extends State<Search> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15.r),
+          padding: EdgeInsets.fromLTRB(
+            10.r,
+            index == 0 ? 5.r : 17.5.r,
+            10.r,
+            15.r,
+          ),
           child: Row(
             children: [
               Text(title, style: UtilTheme.title16Weight),
@@ -97,7 +106,7 @@ class _SearchState extends State<Search> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.all(15.r),
+          padding: EdgeInsets.symmetric(horizontal: 10.r),
           child: isText
               ? _buildTextList(items) // 文本样式
               : _buildBtnList(items), // 按钮样式
@@ -142,7 +151,7 @@ class _SearchState extends State<Search> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(right: 5.r),
-                  child: Icon(Icons.whatshot, color: Colors.red, size: 16.r),
+                  child: Icon(Icons.hotel_class, color: Colors.red, size: 16.r),
                 ),
                 Expanded(
                   child: Text(
@@ -166,24 +175,30 @@ class _SearchState extends State<Search> {
   /// 头部
   PreferredSizeWidget _buildHeader() {
     return AppBar(
+      titleSpacing: 0,
       title: Container(
-        height: 40,
+        height: 40.r,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
         ),
         child: TextField(
+          style: TextStyle(fontSize: 15.r),
           decoration: InputDecoration(
             hintText: '搜索...',
             border: InputBorder.none,
-            prefixIcon: Icon(Icons.search, color: Colors.grey),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16),
+            prefixIcon: Icon(Icons.search, size: 25.r, color: Colors.grey),
+            contentPadding: EdgeInsets.all(7.5.r),
           ),
         ),
       ),
       actions: [
-        Text('搜索', style: UtilTheme.text14,)
+        Container(
+          padding: EdgeInsets.all(10.r),
+          alignment: Alignment.center,
+          child: Text('搜索', style: UtilTheme.text14),
+        ),
       ],
     );
   }

@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:test_flutter/component/com_img.dart';
 import 'package:test_flutter/component/com_loading.dart';
 import 'package:test_flutter/dio/dio_api_list.dart';
@@ -12,7 +12,6 @@ import 'package:test_flutter/router/index.dart';
 import 'package:test_flutter/util/util_hive_cache.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:test_flutter/util/util_sp.dart';
 import 'package:test_flutter/util/util_theme.dart';
 
 /// 欢迎界面（有状态）
@@ -145,50 +144,24 @@ class _StartState extends State<Start> {
 
   /// 广告
   int _curIndex = 0;
-  Map<String, List<AdItem>> _adMap = {
-    'topSwiper': [],
-    'topIcon': [],
-    'topBanner': [],
-    'bottomImg': [],
-    'bottomBanner': [],
-    'bottomIcon': [],
-  };
+  List<AdItem> _adBanner = [];
   Future<void> _getAd() async {
-    String? jsonStr = UtilSp.getString('ad'); // 获取广告
-    if (jsonStr != null && jsonStr.isNotEmpty) {
-      Map<String, dynamic> jsonMap = jsonDecode(jsonStr);
-      _adMap = {
-        for (var entry in jsonMap.entries)
-          entry.key: (entry.value as List)
-              .map((itemJson) => AdItem.fromJson(itemJson))
-              .toList(),
-      };
-    } else {
-      final ModelAd apiGet = await DioApiList.apiGetAd(
-        query: {'ads_type': '3,4,8,9,11,12'},
-      );
-      if (apiGet.code == 200) {
-        final positionMap = {
-          8: 'topSwiper',
-          9: 'topIcon',
-          3: 'topBanner',
-          4: 'bottomImg',
-          11: 'bottomBanner',
-          12: 'bottomIcon',
-        };
-        for (var item in apiGet.data!) {
-          final key = positionMap[item.position];
-          if (key != null) {
-            _adMap[key]!.add(item);
-          }
+    final ModelAd apiGet = await DioApiList.apiGetAd(
+      query: {'ads_type': '3,4,8,9,11,12'},
+    );
+    if (apiGet.code == 200) {
+      _adBanner.addAll(apiGet.data as List<AdItem>);
+      for (var item in apiGet.data!) {
+        if (item.position == 8) {
+          _adBanner.add(item);
         }
-        await UtilSp.setMap('ad', _adMap); // 保存广告
       }
+      await SpUtil.putObjectList('ad', apiGet.data as List<AdItem>); // 保存广告
     }
   }
 
   Widget _buildSwiper(BuildContext context) {
-    if (_adMap['topSwiper']!.isEmpty) {
+    if (_adBanner.isEmpty) {
       return const SizedBox.shrink();
     } else {
       return Stack(
@@ -206,7 +179,7 @@ class _StartState extends State<Start> {
                 });
               },
             ),
-            items: _adMap['topSwiper']!.map((item) {
+            items: _adBanner.map((item) {
               return ComImg(
                 type: 1,
                 url: item.image,
@@ -222,11 +195,11 @@ class _StartState extends State<Start> {
   }
 
   Widget _buildPoint() {
-    if (_adMap['topSwiper']!.isEmpty) {
+    if (_adBanner.isEmpty) {
       return const SizedBox.shrink();
     }
     Widget activeBox = const SizedBox.shrink();
-    if (_curIndex == (_adMap['topSwiper']!.length - 1)) {
+    if (_curIndex == (_adBanner.length - 1)) {
       activeBox = GestureDetector(
         onTap: () {
           GoRouter.of(context).go('/home');
@@ -244,7 +217,7 @@ class _StartState extends State<Start> {
           activeBox,
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: _adMap['topSwiper']!.asMap().entries.map((entry) {
+            children: _adBanner.asMap().entries.map((entry) {
               int index = entry.key;
               return Container(
                 margin: EdgeInsets.all(3.r),

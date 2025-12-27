@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:test_flutter/model/basic.dart';
 
 // 侧边栏导航项
@@ -6,7 +6,7 @@ class LeftNavItem {
   int id;
   String name;
   String link;
-  String? icon;
+  IconData? icon;
   List<LeftNavItem>? children;
 
   LeftNavItem({

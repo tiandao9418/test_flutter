@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:test_flutter/router/index.dart';
 import 'package:test_flutter/util/util_config.dart';
 import 'package:test_flutter/util/util_device.dart';
@@ -7,7 +8,6 @@ import 'package:test_flutter/util/util_hive_cache.dart';
 import 'package:test_flutter/util/util_language.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_flutter/util/util_package.dart';
-import 'package:test_flutter/util/util_sp.dart';
 import 'package:test_flutter/util/util_theme.dart';
 import 'package:media_kit/media_kit.dart';
 
@@ -36,7 +36,7 @@ void main() async {
   UtilConfig().setVersion(packageVersion);
 
   /// 初始化shared_preferences
-  await UtilSp.init();
+await SpUtil.getInstance();
 
   /// 初始化hive
   await UtilHiveCache.init();

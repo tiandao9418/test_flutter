@@ -4,8 +4,8 @@ class BottomTabItem {
   final int index;
   final String name;
   final String link;
-  final String icon;
-  final int iconActive;
+  final IconData? icon;
+  final IconData? iconActive;
   final Widget component;
 
   BottomTabItem({

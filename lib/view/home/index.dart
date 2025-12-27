@@ -1,10 +1,12 @@
 import "package:flutter/material.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
+import "package:pull_to_refresh/pull_to_refresh.dart";
 import "package:test_flutter/component/com_icon.dart";
 import "package:test_flutter/component/com_loading.dart";
 import "package:test_flutter/dio/dio_api_list.dart";
 import "package:test_flutter/layouts/ad.dart";
 import "package:test_flutter/model/category.dart";
+import "package:test_flutter/util/util_log.dart";
 import "package:test_flutter/util/util_theme.dart";
 
 // 首页
@@ -25,7 +27,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   /// 初始化
   bool _isLoading = true;
   Future<void> _init() async {
-    final ModelCategory response = await DioApiList.apiGetCategory();
+    final ModelCategory response = await DioApiList.apiGetCategory(
+      query: {'type': '1'},
+    );
     if (response.code == 200) {
       if (response.data!.isNotEmpty) {
         setState(() {
@@ -97,15 +101,66 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         physics: const ClampingScrollPhysics(), // 禁用过度滚动
         controller: _tabController,
         children: _tabs.map((item) {
-          return LayoutAd(
-            child: Container(
-              width: double.infinity,
-              height: 900.r,
-              color: UtilTheme.dark8,
-              child: Text(item.name!, style: UtilTheme.text16),
-            ),
-          );
+          return LayoutAd(child: _buildRefreshAndPull());
         }).toList(),
+      ),
+    );
+  }
+
+  /// 下拉刷新上拉加载
+  List _list = [];
+  List<String> items = ["1", "2", "3", "4", "5", "6", "7", "8"];
+  RefreshController _refreshController = RefreshController(
+    initialRefresh: false,
+  );
+  void _onRefresh() async {
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async {
+    await Future.delayed(Duration(milliseconds: 1000));
+    items.add((items.length + 1).toString());
+    if (mounted) setState(() {});
+    _refreshController.loadComplete();
+  }
+
+  Widget _buildRefreshAndPull() {
+    return SmartRefresher(
+      enablePullDown: true,
+      enablePullUp: true,
+      header: WaterDropHeader(),
+      // footer: CustomFooter(
+      //   builder: (BuildContext context,LoadStatus mode){
+      //     Widget body ;
+      //     if(mode==LoadStatus.idle){
+      //       body =  Text("上拉加载");
+      //     }
+      //     else if(mode==LoadStatus.loading){
+      //       body =  CupertinoActivityIndicator();
+      //     }
+      //     else if(mode == LoadStatus.failed){
+      //       body = Text("加载失败！点击重试！");
+      //     }
+      //     else if(mode == LoadStatus.canLoading){
+      //        body = Text("松手,加载更多!");
+      //     }
+      //     else{
+      //       body = Text("没有更多数据了!");
+      //     }
+      //     return Container(
+      //       height: 55.0,
+      //       child: Center(child:body),
+      //     );
+      //   },
+      // ),
+      controller: _refreshController,
+      onRefresh: _onRefresh,
+      onLoading: _onLoading,
+      child: ListView.builder(
+        itemBuilder: (c, i) => Card(child: Center(child: Text(items[i]))),
+        itemExtent: 100.0,
+        itemCount: items.length,
       ),
     );
   }
@@ -127,6 +182,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   void dispose() {
     _tabController?.dispose();
+    _refreshController.dispose();
     super.dispose();
   }
 }

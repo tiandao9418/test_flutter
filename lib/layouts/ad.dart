@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:test_flutter/component/com_ad.dart';
-import 'package:test_flutter/component/com_loading.dart';
 import 'package:test_flutter/component/com_toast.dart';
 import 'package:test_flutter/model/ad.dart';
-import 'package:test_flutter/util/util_sp.dart';
 
 /// 广告布局
 class LayoutAd extends StatefulWidget {
@@ -38,17 +35,30 @@ class _LayoutAdState extends State<LayoutAd> {
       setState(() {
         isLoading = true;
       });
-      String? jsonStr = UtilSp.getString('ad'); // 获取广告
-      if (jsonStr != null && jsonStr.isNotEmpty) {
-        final jsonMap = jsonDecode(jsonStr) as Map<String, dynamic>;
-        for (var entry in _adMap.entries) {
-          if (jsonMap.containsKey(entry.key)) {
-            List<AdItem> newList = [];
-            for (var itemJson in jsonMap[entry.key] as List) {
-              newList.add(AdItem.fromJson(itemJson as Map<String, dynamic>));
-            }
-            entry.value.clear();
-            entry.value.addAll(newList);
+      List<Map<dynamic, dynamic>>? listMap = SpUtil.getObjectList('ad'); // 获取广告
+      if (listMap != null) {
+        for (var item in listMap) {
+          final AdItem adItem = AdItem.fromJson(item.cast<String, dynamic>());
+          final int position = adItem.position;
+          switch (position) {
+            case 8:
+              _adMap['topSwiper']!.add(adItem);
+              break;
+            case 9:
+              _adMap['topIcon']!.add(adItem);
+              break;
+            case 3:
+              _adMap['topBanner']!.add(adItem);
+              break;
+            case 4:
+              _adMap['bottomImg']!.add(adItem);
+              break;
+            case 11:
+              _adMap['bottomBanner']!.add(adItem);
+              break;
+            case 12:
+              _adMap['bottomIcon']!.add(adItem);
+              break;
           }
         }
       }
